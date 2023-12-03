@@ -92,3 +92,75 @@ sendCommand("AT+CIPSEND=0,"
 +String(getData3.length()+4),4,">");
 wmod.println(getData3);delay(500);
 countTrueCommand++;
+sendCommand("AT+CIPCLOSE=0",5,"OK");
+String getData4 = "GET /update?api_key="+ API
++"&"+ field3 +"="+String(temperature);
+sendCommand("AT+CIPMUX=1",5,"OK");
+sendCommand("AT+CIPSTART=0,\"TCP\",\""+ HOST
++"\","+ PORT,15,"OK");
+sendCommand("AT+CIPSEND=0,"
++String(getData4.length()+4),4,">");
+wmod.println(getData4);delay(500);countTrueCommand+
++;
+sendCommand("AT+CIPCLOSE=0",5,"OK");
+String getData5 = "GET /update?api_key="+ API
++"&"+ field4 +"="+ String(gas);
+sendCommand("AT+CIPMUX=1",5,"OK");
+sendCommand("AT+CIPSTART=0,\"TCP\",\""+ HOST
++"\","+ PORT,15,"OK");
+sendCommand("AT+CIPSEND=0,"
++String(getData5.length()+4),4,">");
+wmod.println(getData5);delay(500);countTrueCommand+
++;
+sendCommand("AT+CIPCLOSE=0",5,"OK");
+}
+int getSensorData(){
+return random(1000); // Replace with your own
+sensor code
+}
+boolean GasDetected(int GasPin)
+{
+float gasAnalog = analogRead(GasPin);
+Serial.println(" gasAnalog value:");
+Serial.println(gasAnalog);
+float gasVoltage = (gasAnalog/1024)*5.0;
+if(gasVoltage > 2)
+{
+Serial.print(",\"Poisonous Gas Detected\":");
+}
+else
+{
+Serial.print(",\"Poisonous Gas Not
+Detected\":");
+}
+}
+void sendCommand(String command, int maxTime, char
+readReplay[]) {
+Serial.print(countTrueCommand);
+Serial.print(". at command => ");
+Serial.print(command);
+Serial.print(" ");
+while(countTimeCommand < (maxTime*1))
+{
+wmod.println(command);//at+cipsend
+if(wmod.find(readReplay))//ok
+{
+found = true;
+break;
+}
+countTimeCommand++;
+}
+if(found == true)
+{
+Serial.println("OYI");
+countTrueCommand++;
+countTimeCommand = 0;
+}
+if(found == false)
+{
+Serial.println("Fail");
+countTrueCommand = 0;
+countTimeCommand = 0;
+}
+found = false;
+}
